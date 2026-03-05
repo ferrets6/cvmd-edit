@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor CV</title>
+  <link rel="stylesheet" href="edit.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+</head>
+<body>
+
+<!-- ===================== AUTH GATE ===================== -->
+<div id="auth-gate">
+  <div class="auth-box">
+    <h1>Editor CV</h1>
+    <p>Inserisci la password per accedere all'editor.</p>
+    <input type="password" id="password-input" placeholder="Password"
+           onkeydown="if(event.key==='Enter') checkPassword()">
+    <button class="btn-primary" id="auth-btn" onclick="checkPassword()">Accedi</button>
+    <div id="auth-error">Password errata. Riprova.</div>
+  </div>
+</div>
+
+<!-- ===================== EDITOR APP ===================== -->
+<div id="editor-app" style="display:none">
+
+  <!-- Toolbar -->
+  <div id="toolbar">
+    <span id="toolbar-title">Editor CV — Dott.ssa Cristina Pellegrini</span>
+    <button class="btn-tool" id="btn-legend"  onclick="toggleLegend()">Guida</button>
+    <button class="btn-tool" id="btn-preview" onclick="togglePreview()">Anteprima</button>
+    <button class="btn-tool" id="btn-change-photo" onclick="document.getElementById('photo-input').click()">Cambia foto</button>
+    <button class="btn-tool" id="btn-restore-photo" style="display:none" onclick="restorePhoto()">Ripristina foto</button>
+    <button class="btn-tool btn-save" id="btn-save" onclick="saveChanges()">Salva e pubblica</button>
+  </div>
+
+  <!-- Photo input (hidden) -->
+  <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="onPhotoSelected(event)">
+
+  <!-- Photo preview modal -->
+  <div id="photo-modal">
+    <div class="photo-modal-box">
+      <h2>Cambia foto profilo</h2>
+      <div id="photo-preview-wrap">
+        <canvas id="photo-preview-canvas"></canvas>
+      </div>
+      <p class="photo-modal-hint">La foto verrà ritagliata in cerchio. L'immagine di anteprima social (og-image) verrà aggiornata automaticamente.</p>
+      <div class="photo-modal-actions">
+        <button class="btn-tool" onclick="cancelPhoto()">Annulla</button>
+        <button class="btn-tool btn-save" onclick="confirmPhoto()">Conferma foto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Work area: editor + preview -->
+  <div id="work-area">
+    <div id="editor-pane">
+      <textarea id="markdown-input" spellcheck="false"
+                placeholder="Caricamento in corso..."
+                oninput="onEditorInput()"></textarea>
+    </div>
+    <div id="preview-pane" class="hidden">
+      <div id="preview-content"></div>
+    </div>
+  </div>
+
+  <!-- Legend (collapsible) -->
+  <div id="legend-section">
+    <div id="legend-grid">
+
+      <div class="legend-group-title">Titoli</div>
+      <div class="legend-item"><code># Testo</code><span>Titolo principale (H1)</span></div>
+      <div class="legend-item"><code>## Testo</code><span>Titolo di sezione (H2)</span></div>
+      <div class="legend-item"><code>### Testo</code><span>Sottotitolo (H3)</span></div>
+
+      <div class="legend-group-title">Testo</div>
+      <div class="legend-item"><code>**testo**</code><span>Grassetto</span></div>
+      <div class="legend-item"><code>*testo*</code><span>Corsivo</span></div>
+      <div class="legend-item"><code>***testo***</code><span>Grassetto + corsivo</span></div>
+      <div class="legend-item"><code>[testo](url)</code><span>Link cliccabile</span></div>
+      <div class="legend-item"><code>&gt; testo</code><span>Citazione (blockquote)</span></div>
+      <div class="legend-item"><code>---</code><span>Linea separatrice</span></div>
+
+      <div class="legend-group-title">Liste</div>
+      <div class="legend-item"><code>- voce</code><span>Lista puntata</span></div>
+      <div class="legend-item"><code>1. voce</code><span>Lista numerata</span></div>
+
+      <div class="legend-group-title">Tabelle</div>
+      <div class="legend-item full">
+        <code>| Colonna 1 | Colonna 2 |</code>
+        <code>|-----------|-----------|</code>
+        <code>| Valore A  | Valore B  |</code>
+      </div>
+
+      <div class="legend-group-title">Funzioni speciali di questo CV</div>
+      <div class="legend-item full">
+        <code>&lt;div class="page-break"&gt;&lt;/div&gt;</code>
+        <span>Interruzione di pagina nel PDF — inseriscila tra sezioni lunghe</span>
+      </div>
+      <div class="legend-item full">
+        <code>&lt;img src="assets/profile.png" width="200" align="right" style="border-radius:50%; object-fit:cover;"&gt;</code>
+        <span>Foto profilo circolare, allineata a destra del testo</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Status bar -->
+  <div id="status-bar">Pronto.</div>
+
+</div>
+
+<script src="edit.js"></script>
+</body>
+</html>
