@@ -22,6 +22,7 @@ async function checkPassword() {
       sessionStorage.setItem('session_token', token);
       document.getElementById('auth-gate').style.display = 'none';
       document.getElementById('editor-app').style.display = 'flex';
+      loadConfig();
       loadReadme();
     } else {
       errEl.style.display = 'block';
@@ -40,6 +41,23 @@ async function checkPassword() {
 
 function getSessionHeader() {
   return { 'x-session': sessionStorage.getItem('session_token') || '' };
+}
+
+// ===================================================
+// CONFIGURAZIONE (URL assets del repo target)
+// ===================================================
+let repoProfileImageUrl = null;
+
+async function loadConfig() {
+  try {
+    const res = await fetch('/.netlify/functions/get-config', {
+      headers: getSessionHeader(),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      repoProfileImageUrl = data.profileImageUrl;
+    }
+  } catch { /* non bloccante */ }
 }
 
 // ===================================================
@@ -93,11 +111,11 @@ function updatePreview() {
   if (!previewVisible) return;
   const md = document.getElementById('markdown-input').value;
   document.getElementById('preview-content').innerHTML = marked.parse(md);
-  if (previewPhotoUrl) {
-    document.querySelectorAll('#preview-content img').forEach(img => {
-      if (img.src.includes('profile.png')) img.src = previewPhotoUrl;
-    });
-  }
+  document.querySelectorAll('#preview-content img').forEach(img => {
+    if (img.getAttribute('src') === 'assets/profile.png') {
+      img.src = previewPhotoUrl || repoProfileImageUrl || img.src;
+    }
+  });
 }
 
 // ===================================================
