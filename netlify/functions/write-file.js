@@ -43,7 +43,7 @@ exports.handler = async (event) => {
   const { content, message, sha: providedSha } = body;
   // path è opzionale: se non passato dal client usa FILE_PATH (per il README)
   const path = body.path || process.env.FILE_PATH;
-  const { REPO_OWNER, REPO_NAME, BRANCH, GITHUB_TOKEN } = process.env;
+  const { REPO_OWNER, REPO_NAME, REPO_BRANCH, GITHUB_TOKEN } = process.env;
 
   if (!path || !content || !message) {
     return { statusCode: 400, body: 'Missing required fields' };
@@ -51,7 +51,7 @@ exports.handler = async (event) => {
 
   const sha = providedSha !== undefined ? providedSha : await getFileSha(path);
 
-  const payload = { message, content, branch: BRANCH };
+  const payload = { message, content, branch: REPO_BRANCH };
   if (sha) payload.sha = sha;
 
   const res = await fetch(
