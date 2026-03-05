@@ -56,6 +56,16 @@ async function loadConfig() {
     if (res.ok) {
       const data = await res.json();
       repoProfileImageUrl = data.profileImageUrl;
+      // update toolbar title using repo name if available
+      const titleEl = document.getElementById('toolbar-title');
+      if (titleEl) {
+        let base = 'Editor CV';
+        if (data.repoName) {
+          // use repo name instead of personal reference
+          base += ' — ' + data.repoName;
+        }
+        titleEl.textContent = base;
+      }
     }
   } catch { /* non bloccante */ }
 }

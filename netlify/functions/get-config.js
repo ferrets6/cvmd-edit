@@ -22,6 +22,7 @@ exports.handler = async (event) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       profileImageUrl: `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/assets/profile.png`,
+      repoName: REPO_NAME
     }),
   };
 };
